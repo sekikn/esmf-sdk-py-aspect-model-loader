@@ -9,6 +9,7 @@
 #
 #   SPDX-License-Identifier: MPL-2.0
 """SammCli unit tests"""
+import os
 import subprocess
 
 from unittest import mock
@@ -64,7 +65,9 @@ def test_get_client_path(_, path_mock, join_mock):
 
     assert result == "cli_path"
     path_mock.resolve.assert_called_once()
-    join_mock.assert_has_calls([mock.call("parent", "samm-cli"), mock.call("cli_path", "samm")])
+    join_mock.assert_has_calls(
+        [mock.call("parent", "samm-cli"), mock.call("cli_path", os.path.basename(SammCli._get_client_path()))]
+    )
 
 
 @mock.patch(f"{BASE_PATH}.download_samm_cli")
