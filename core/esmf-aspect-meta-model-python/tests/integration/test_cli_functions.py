@@ -132,7 +132,7 @@ class TestSammCliIntegration:
         """Test generating AsyncAPI specification."""
         output_file = os.path.join(temp_output_dir, "asyncapi.yaml")
 
-        samm_cli.to_asyncapi(file_path, output=output_file, channel_address="test/topic", application_id="test-app")
+        samm_cli.to_asyncapi(file_path, output=output_file, channel_address="test/topic")
 
         assert os.path.exists(output_file)
         with open(output_file, "r") as f:
