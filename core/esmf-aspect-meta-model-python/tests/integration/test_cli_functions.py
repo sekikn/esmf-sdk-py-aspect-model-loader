@@ -17,6 +17,7 @@ import tempfile
 
 from pathlib import Path
 
+import polars as pl
 import pytest
 
 from esmf_aspect_meta_model_python.samm_cli.base import SammCli
@@ -88,6 +89,18 @@ class TestSammCliIntegration:
             assert "testProperty" in data
             assert "testComplexProperty" in data
 
+    def test_to_parquet(self, samm_cli, file_path, temp_output_dir):
+        """Test generating example Parquet payload."""
+        output_file = os.path.join(temp_output_dir, "example.parquet")
+
+        samm_cli.to_parquet(file_path, output=output_file)
+
+        assert os.path.exists(output_file)
+        df = pl.read_parquet(output_file)
+        assert "testProperty" in df.columns
+        assert "testComplexProperty__entityProperty1" in df.columns
+        assert "testComplexProperty__entityProperty2" in df.columns
+
     def test_to_schema(self, samm_cli, file_path, temp_output_dir):
         """Test generating JSON schema."""
         output_file = os.path.join(temp_output_dir, "schema.json")
@@ -132,7 +145,9 @@ class TestSammCliIntegration:
         """Test generating AsyncAPI specification."""
         output_file = os.path.join(temp_output_dir, "asyncapi.yaml")
 
-        samm_cli.to_asyncapi(file_path, output=output_file, channel_address="test/topic", application_id="test-app")
+        samm_cli.to_asyncapi(
+            file_path, output=output_file, channel_address="test/topic", application_id="example:test-app"
+        )
 
         assert os.path.exists(output_file)
         with open(output_file, "r") as f:
